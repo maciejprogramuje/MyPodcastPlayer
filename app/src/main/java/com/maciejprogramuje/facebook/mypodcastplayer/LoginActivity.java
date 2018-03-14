@@ -38,20 +38,16 @@ public class LoginActivity extends AppCompatActivity {
 
         String username = loginEditText.getText().toString();
         String password = passwordEditText.getText().toString();
-
-
-
         Log.w("UWAGA", username + ": " + password);
 
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-
-        OkHttpClient httpClient = new OkHttpClient().newBuilder().addNetworkInterceptor(loggingInterceptor).build();
+        OkHttpClient httpClient = new OkHttpClient().newBuilder().addInterceptor(loggingInterceptor).build();
 
         Retrofit.Builder builder = new Retrofit.Builder();
         builder.baseUrl("https://parseapi.back4app.com/");
-        builder.addConverterFactory(GsonConverterFactory.create());
         builder.client(httpClient);
+        builder.addConverterFactory(GsonConverterFactory.create());
         Retrofit retrofit = builder.build();
 
         PodcastApi podcastApi = retrofit.create(PodcastApi.class);
