@@ -5,19 +5,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-
-import com.maciejprogramuje.facebook.mypodcastplayer.api.LoginResponse;
-import com.maciejprogramuje.facebook.mypodcastplayer.api.PodcastApi;
+import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -26,11 +17,27 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.passwordEditText)
     EditText passwordEditText;
 
+    private LoginManager loginManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+
+        loginManager = new LoginManager();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        loginManager.onAttach(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        loginManager.onStop();
     }
 
     public void loginClick(View view) {
@@ -38,34 +45,16 @@ public class LoginActivity extends AppCompatActivity {
 
         String username = loginEditText.getText().toString();
         String password = passwordEditText.getText().toString();
-        Log.w("UWAGA", username + ": " + password);
 
-        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient httpClient = new OkHttpClient().newBuilder().addInterceptor(loggingInterceptor).build();
-
-        Retrofit.Builder builder = new Retrofit.Builder();
-        builder.baseUrl("https://parseapi.back4app.com/");
-        builder.client(httpClient);
-        builder.addConverterFactory(GsonConverterFactory.create());
-        Retrofit retrofit = builder.build();
-
-        PodcastApi podcastApi = retrofit.create(PodcastApi.class);
-        Call<LoginResponse> call = podcastApi.getLogin(username, password);
-        call.enqueue(new Callback<LoginResponse>() {
-            @Override
-            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-
-            }
-
-            @Override
-            public void onFailure(Call<LoginResponse> call, Throwable t) {
-
-            }
-        });
+        loginManager.login(username, password);
     }
 
     public void registerClick(View view) {
         Log.w("UWAGA", "register btn clicked!");
+    }
+
+
+    public void showError(String message) {
+        Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
     }
 }
