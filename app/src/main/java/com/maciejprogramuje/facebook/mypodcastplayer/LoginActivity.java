@@ -25,13 +25,15 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
-        loginManager = new LoginManager();
+        loginManager = ((App) getApplication()).getLoginManager();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         loginManager.onAttach(this);
+
+        Log.w("UWAGA", "loginManager" + loginManager);
     }
 
     @Override
@@ -55,6 +57,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
     public void showError(String message) {
+        Log.w("UWAGA", "Response -> " + message);
         Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
     }
 }

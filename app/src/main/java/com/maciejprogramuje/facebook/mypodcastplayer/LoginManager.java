@@ -1,6 +1,7 @@
 package com.maciejprogramuje.facebook.mypodcastplayer;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.maciejprogramuje.facebook.mypodcastplayer.api.ErrorResponse;
@@ -19,10 +20,6 @@ import retrofit2.Converter;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
-/**
- * Created by m.szymczyk on 2018-03-14.
- */
 
 public class LoginManager {
     private LoginActivity loginActivity;
@@ -50,7 +47,7 @@ public class LoginManager {
         Call<LoginResponse> call = podcastApi.getLogin(username, password);
         call.enqueue(new Callback<LoginResponse>() {
             @Override
-            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+            public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
                 if (response.isSuccessful()) {
                     Log.w("UWAGA", "Response -> " + response);
                     if (loginActivity != null) {
@@ -61,8 +58,8 @@ public class LoginManager {
                     ResponseBody responseBody = response.errorBody();
                     Converter<ResponseBody, ErrorResponse> converter = retrofit.responseBodyConverter(ErrorResponse.class, new Annotation[]{});
                     try {
+                        assert responseBody != null;
                         ErrorResponse errorResponse = converter.convert(responseBody);
-                        Log.w("UWAGA", "Response -> " + errorResponse);
                         if(loginActivity != null) {
                             loginActivity.showError(errorResponse.toString());
                         }
@@ -73,7 +70,7 @@ public class LoginManager {
             }
 
             @Override
-            public void onFailure(Call<LoginResponse> call, Throwable t) {
+            public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable t) {
                 loginActivity.showError(t.getLocalizedMessage());
             }
         });
