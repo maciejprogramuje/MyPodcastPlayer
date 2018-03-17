@@ -1,6 +1,7 @@
 package com.maciejprogramuje.facebook.mypodcastplayer;
 
 import android.app.Application;
+import android.preference.PreferenceManager;
 
 /**
  * Created by m.szymczyk on 2018-03-14.
@@ -8,15 +9,21 @@ import android.app.Application;
 
 public class App extends Application {
     private LoginManager loginManager;
+    private UserStorage userStorage;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        loginManager = new LoginManager();
+        userStorage = new UserStorage(PreferenceManager.getDefaultSharedPreferences(this));
+        loginManager = new LoginManager(userStorage);
     }
 
     public LoginManager getLoginManager() {
         return loginManager;
+    }
+
+    public UserStorage getUserStorage() {
+        return userStorage;
     }
 }

@@ -23,6 +23,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class LoginManager {
     private LoginActivity loginActivity;
+    private UserStorage userStorage;
+
+    public LoginManager(UserStorage userStorage) {
+        this.userStorage = userStorage;
+    }
 
     public void onAttach(LoginActivity loginActivity) {
         this.loginActivity = loginActivity;
@@ -50,6 +55,7 @@ public class LoginManager {
             public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
                 if (response.isSuccessful()) {
                     Log.w("UWAGA", "Response -> " + response);
+                    userStorage.login(response.body());
                     if (loginActivity != null) {
                         loginActivity.startActivity(new Intent(loginActivity, MainActivity.class));
                         loginActivity.finish();
