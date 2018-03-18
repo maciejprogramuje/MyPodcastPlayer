@@ -24,6 +24,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class LoginManager {
     private LoginActivity loginActivity;
     private UserStorage userStorage;
+    boolean isDuringLoging;
 
     public LoginManager(UserStorage userStorage) {
         this.userStorage = userStorage;
@@ -49,36 +50,53 @@ public class LoginManager {
         final Retrofit retrofit = builder.build();
 
         PodcastApi podcastApi = retrofit.create(PodcastApi.class);
-        Call<LoginResponse> call = podcastApi.getLogin(username, password);
-        call.enqueue(new Callback<LoginResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
-                if (response.isSuccessful()) {
-                    Log.w("UWAGA", "Response -> " + response);
-                    userStorage.login(response.body());
-                    if (loginActivity != null) {
-                        loginActivity.startActivity(new Intent(loginActivity, MainActivity.class));
-                        loginActivity.finish();
-                    }
-                } else {
-                    ResponseBody responseBody = response.errorBody();
-                    Converter<ResponseBody, ErrorResponse> converter = retrofit.responseBodyConverter(ErrorResponse.class, new Annotation[]{});
-                    try {
-                        assert responseBody != null;
-                        ErrorResponse errorResponse = converter.convert(responseBody);
-                        if(loginActivity != null) {
-                            loginActivity.showError(errorResponse.toString());
+
+        if(!isDuringLoging) {
+            isDuringLoging = true;
+            updateProgress();
+
+            Call<LoginResponse> call = podcastApi.getLogin(username, password);
+            call.enqueue(new Callback<LoginResponse>() {
+                @Override
+                public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
+                    isDuringLoging = false;
+                    updateProgress();
+                    if (response.isSuccessful()) {
+                        Log.w("UWAGA", "Response -> " + response);
+                        userStorage.login(response.body());
+                        if (loginActivity != null) {
+                            loginActivity.startActivity(new Intent(loginActivity, MainActivity.class));
+                            loginActivity.finish();
                         }
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    } else {
+                        ResponseBody responseBody = response.errorBody();
+                        Converter<ResponseBody, ErrorResponse> converter = retrofit.responseBodyConverter(ErrorResponse.class, new Annotation[]{});
+                        try {
+                            assert responseBody != null;
+                            ErrorResponse errorResponse = converter.convert(responseBody);
+                            if(loginActivity != null) {
+                                Log.w("UWAGA", "ErrorResponse -> " + errorResponse);
+                                loginActivity.showError(errorResponse.toString());
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable t) {
-                loginActivity.showError(t.getLocalizedMessage());
-            }
-        });
+                @Override
+                public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable t) {
+                    isDuringLoging = false;
+                    updateProgress();
+                    loginActivity.showError(t.getLocalizedMessage());
+                }
+            });
+        }
+    }
+
+    private void updateProgress() {
+        if(loginActivity != null) {
+            loginActivity.showProgress(isDuringLoging);
+        }
     }
 }

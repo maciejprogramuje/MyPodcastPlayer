@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -16,6 +17,10 @@ public class LoginActivity extends AppCompatActivity {
     EditText loginEditText;
     @BindView(R.id.passwordEditText)
     EditText passwordEditText;
+    @BindView(R.id.registerButton)
+    Button registerButton;
+    @BindView(R.id.loginButton)
+    Button loginButton;
 
     private LoginManager loginManager;
 
@@ -57,7 +62,10 @@ public class LoginActivity extends AppCompatActivity {
 
 
     public void showError(String message) {
-        Log.w("UWAGA", "Response -> " + message);
         Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
+    }
+
+    public void showProgress(boolean progress) {
+        loginButton.setEnabled(!progress);
     }
 }
