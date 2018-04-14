@@ -8,18 +8,19 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.InjectView;
 import butterknife.OnClick;
 
+
 public class LoginActivity extends AppCompatActivity {
-    @BindView(R.id.loginEditText)
+    @InjectView(R.id.loginEditText)
     EditText loginEditText;
-    @BindView(R.id.passwordEditText)
+    @InjectView(R.id.passwordEditText)
     EditText passwordEditText;
-    @BindView(R.id.registerButton)
+    @InjectView(R.id.registerButton)
     Button registerButton;
-    @BindView(R.id.loginButton)
+    @InjectView(R.id.loginButton)
     Button loginButton;
 
     private LoginManager loginManager;
@@ -28,7 +29,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        ButterKnife.bind(this);
+        ButterKnife.inject(this);
 
         loginManager = ((App) getApplication()).getLoginManager();
     }
@@ -47,24 +48,6 @@ public class LoginActivity extends AppCompatActivity {
         loginManager.onStop();
     }
 
-    public void loginClick(View view) {
-        Log.w("UWAGA", "login btn clicked!");
-
-
-            Log.w("UWAGA", loginEditText.getText().toString());
-
-
-        //String username = loginEditText.getText().toString();
-        //String password = passwordEditText.getText().toString();
-
-        //loginManager.login(username, password);
-    }
-
-    public void registerClick(View view) {
-        Log.w("UWAGA", "register btn clicked!");
-    }
-
-
     public void showError(String message) {
         Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
     }
@@ -77,8 +60,15 @@ public class LoginActivity extends AppCompatActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.registerButton:
+                Log.w("UWAGA", "register btn clicked!");
                 break;
             case R.id.loginButton:
+                Log.w("UWAGA", "login btn clicked!");
+
+                String username = loginEditText.getText().toString();
+                String password = passwordEditText.getText().toString();
+
+                loginManager.login(username, password);
                 break;
         }
     }
