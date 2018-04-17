@@ -1,12 +1,16 @@
-package com.maciejprogramuje.facebook.mypodcastplayer;
+package com.maciejprogramuje.facebook.mypodcastplayer.screens.login;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.maciejprogramuje.facebook.mypodcastplayer.App;
+import com.maciejprogramuje.facebook.mypodcastplayer.R;
+import com.maciejprogramuje.facebook.mypodcastplayer.screens.register.RegisterActivity;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -38,8 +42,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         loginManager.onAttach(this);
-
-        Log.w("UWAGA", "loginManager" + loginManager);
     }
 
     @Override
@@ -60,14 +62,11 @@ public class LoginActivity extends AppCompatActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.registerButton:
-                Log.w("UWAGA", "register btn clicked!");
+                startActivity(new Intent(this, RegisterActivity.class));
                 break;
             case R.id.loginButton:
-                Log.w("UWAGA", "login btn clicked!");
-
                 String username = loginEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
-
                 loginManager.login(username, password);
                 break;
         }

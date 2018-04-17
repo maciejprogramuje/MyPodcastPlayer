@@ -1,33 +1,36 @@
-package com.maciejprogramuje.facebook.mypodcastplayer;
+package com.maciejprogramuje.facebook.mypodcastplayer.screens.login;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.maciejprogramuje.facebook.mypodcastplayer.MainActivity;
+import com.maciejprogramuje.facebook.mypodcastplayer.UserStorage;
 import com.maciejprogramuje.facebook.mypodcastplayer.api.ErrorResponse;
-import com.maciejprogramuje.facebook.mypodcastplayer.api.LoginResponse;
 import com.maciejprogramuje.facebook.mypodcastplayer.api.PodcastApi;
+import com.maciejprogramuje.facebook.mypodcastplayer.api.UserResponse;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 
-import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Converter;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class LoginManager {
     private LoginActivity loginActivity;
     private UserStorage userStorage;
-    boolean isDuringLoging;
+    private final PodcastApi podcastApi;
+    private final Retrofit retrofit;
+    private boolean isDuringLoging;
 
-    public LoginManager(UserStorage userStorage) {
+    public LoginManager(UserStorage userStorage, PodcastApi podcastApi, Retrofit retrofit) {
         this.userStorage = userStorage;
+        this.podcastApi = podcastApi;
+        this.retrofit = retrofit;
     }
 
     public void onAttach(LoginActivity loginActivity) {
@@ -39,31 +42,19 @@ public class LoginManager {
     }
 
     public void login(String username, String password) {
-        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient httpClient = new OkHttpClient().newBuilder().addInterceptor(loggingInterceptor).build();
-
-        Retrofit.Builder builder = new Retrofit.Builder();
-        builder.baseUrl("https://parseapi.back4app.com/");
-        builder.client(httpClient);
-        builder.addConverterFactory(GsonConverterFactory.create());
-        final Retrofit retrofit = builder.build();
-
-        PodcastApi podcastApi = retrofit.create(PodcastApi.class);
-
         if(!isDuringLoging) {
             isDuringLoging = true;
             updateProgress();
 
-            Call<LoginResponse> call = podcastApi.getLogin(username, password);
-            call.enqueue(new Callback<LoginResponse>() {
+            Call<UserResponse> call = podcastApi.getLogin(username, password);
+            call.enqueue(new Callback<UserResponse>() {
                 @Override
-                public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
+                public void onResponse(@NonNull Call<UserResponse> call, @NonNull Response<UserResponse> response) {
                     isDuringLoging = false;
                     updateProgress();
                     if (response.isSuccessful()) {
                         Log.w("UWAGA", "Response -> " + response);
-                        userStorage.login(response.body());
+                        userStorage.save(response.body());
                         if (loginActivity != null) {
                             loginActivity.startActivity(new Intent(loginActivity, MainActivity.class));
                             loginActivity.finish();
@@ -85,7 +76,7 @@ public class LoginManager {
                 }
 
                 @Override
-                public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable t) {
+                public void onFailure(@NonNull Call<UserResponse> call, @NonNull Throwable t) {
                     isDuringLoging = false;
                     updateProgress();
                     loginActivity.showError(t.getLocalizedMessage());

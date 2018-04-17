@@ -4,9 +4,12 @@ package com.maciejprogramuje.facebook.mypodcastplayer.api;
  * Created by 5742ZGPC on 2018-03-13.
  */
 
-public class LoginResponse {
+public class UserResponse {
     public String username;
     public String email;
+    public String firstName;
+    public String lastName;
+    public String password;
     public String objectId;
     public String sessionToken;
 
@@ -14,7 +17,7 @@ public class LoginResponse {
 
     @Override
     public String toString() {
-        return "LoginResponse{" +
+        return "UserResponse{" +
                 "username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", objectId='" + objectId + '\'' +

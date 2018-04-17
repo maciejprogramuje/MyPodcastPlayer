@@ -2,7 +2,7 @@ package com.maciejprogramuje.facebook.mypodcastplayer;
 
 import android.content.SharedPreferences;
 
-import com.maciejprogramuje.facebook.mypodcastplayer.api.LoginResponse;
+import com.maciejprogramuje.facebook.mypodcastplayer.api.UserResponse;
 
 /**
  * Created by 5742ZGPC on 2018-03-17.
@@ -19,12 +19,12 @@ public class UserStorage {
         this.sharedPreferences = sharedPreferences;
     }
 
-    public void login(LoginResponse loginResponse) {
+    public void save(UserResponse userResponse) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(SESSION_TOKEN_KEY, loginResponse.sessionToken);
-        editor.putString(USERNAME_KEY, loginResponse.username);
-        editor.putString(EMAIL_KEY, loginResponse.email);
-        editor.putString(USER_ID_KEY, loginResponse.objectId);
+        editor.putString(SESSION_TOKEN_KEY, userResponse.sessionToken);
+        editor.putString(USERNAME_KEY, userResponse.username);
+        editor.putString(EMAIL_KEY, userResponse.email);
+        editor.putString(USER_ID_KEY, userResponse.objectId);
         editor.apply();
     }
 
