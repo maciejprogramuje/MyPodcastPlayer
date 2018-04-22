@@ -2,6 +2,7 @@ package com.maciejprogramuje.facebook.mypodcastplayer.screens.login;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -26,6 +27,10 @@ public class LoginActivity extends AppCompatActivity {
     Button registerButton;
     @InjectView(R.id.loginButton)
     Button loginButton;
+    @InjectView(R.id.loginEditTextLayout)
+    TextInputLayout loginEditTextLayout;
+    @InjectView(R.id.passwordEditTextLayout)
+    TextInputLayout passwordEditTextLayout;
 
     private LoginManager loginManager;
 
