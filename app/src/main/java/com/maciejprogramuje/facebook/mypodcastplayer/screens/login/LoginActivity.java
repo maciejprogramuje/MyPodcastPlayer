@@ -5,8 +5,8 @@ import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.maciejprogramuje.facebook.mypodcastplayer.App;
@@ -19,19 +19,20 @@ import butterknife.OnClick;
 
 
 public class LoginActivity extends AppCompatActivity {
+
+
     @InjectView(R.id.loginEditText)
     EditText loginEditText;
-    @InjectView(R.id.passwordEditText)
-    EditText passwordEditText;
-    @InjectView(R.id.registerButton)
-    Button registerButton;
-    @InjectView(R.id.loginButton)
-    Button loginButton;
     @InjectView(R.id.loginEditTextLayout)
     TextInputLayout loginEditTextLayout;
+    @InjectView(R.id.passwordEditText)
+    EditText passwordEditText;
     @InjectView(R.id.passwordEditTextLayout)
     TextInputLayout passwordEditTextLayout;
-
+    @InjectView(R.id.registerButton)
+    TextView registerButton;
+    @InjectView(R.id.loginButton)
+    TextView loginButton;
     private LoginManager loginManager;
 
     @Override
