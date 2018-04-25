@@ -11,6 +11,8 @@ import com.maciejprogramuje.facebook.mypodcastplayer.App;
 import com.maciejprogramuje.facebook.mypodcastplayer.MainActivity;
 import com.maciejprogramuje.facebook.mypodcastplayer.R;
 
+import java.util.Objects;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
@@ -35,7 +37,16 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
         ButterKnife.inject(this);
 
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
+
         registerManager = ((App) getApplication()).getRegisterManager();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return super.onSupportNavigateUp();
     }
 
     @Override

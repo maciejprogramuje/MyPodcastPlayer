@@ -18,7 +18,9 @@ public class UserResponse {
     @Override
     public String toString() {
         return "UserResponse{" +
-                "username='" + username + '\'' +
+                "firstname='" + firstName  + '\'' +
+                ", lastname='" + lastName + '\'' +
+                ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", objectId='" + objectId + '\'' +
                 ", sessionToken='" + sessionToken + '\'' +
