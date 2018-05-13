@@ -29,4 +29,13 @@ public interface PodcastApi {
     })
     @POST("users")
     Call<UserResponse> postRegister(@Body RegisterRequest request);
+
+
+    @Headers({
+            "X-Parse-Application-Id: U2jFQxxfQtj0kLOvtt4u1iQKPg318MhkflXY39oG",
+            "X-Parse-REST-API-Key: undefined",
+            "X-Parse-Revocable-Session: 1"
+    })
+    @GET("classes/Podcast")
+    Call<PodcastResponse> getPodcasts();
 }

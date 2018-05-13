@@ -4,8 +4,10 @@ import android.app.Application;
 import android.preference.PreferenceManager;
 
 import com.maciejprogramuje.facebook.mypodcastplayer.api.PodcastApi;
+import com.maciejprogramuje.facebook.mypodcastplayer.screens.discover.DiscoverManager;
 import com.maciejprogramuje.facebook.mypodcastplayer.screens.login.LoginManager;
 import com.maciejprogramuje.facebook.mypodcastplayer.screens.register.RegisterManager;
+import com.squareup.otto.Bus;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -22,6 +24,8 @@ public class App extends Application {
     private UserStorage userStorage;
     private Retrofit retrofit;
     private PodcastApi podcastApi;
+    private DiscoverManager discoverManager;
+    private Bus bus;
 
     @Override
     public void onCreate() {
@@ -42,6 +46,9 @@ public class App extends Application {
         userStorage = new UserStorage(PreferenceManager.getDefaultSharedPreferences(this));
         loginManager = new LoginManager(userStorage, podcastApi, retrofit);
         registerManager = new RegisterManager(userStorage, podcastApi, retrofit);
+        discoverManager = new DiscoverManager(podcastApi);
+
+        bus = new Bus();
     }
 
     public LoginManager getLoginManager() {
@@ -62,5 +69,13 @@ public class App extends Application {
 
     public RegisterManager getRegisterManager() {
         return registerManager;
+    }
+
+    public DiscoverManager getDiscoverManager() {
+        return discoverManager;
+    }
+
+    public Bus getBus() {
+        return bus;
     }
 }

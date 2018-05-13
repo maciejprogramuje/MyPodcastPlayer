@@ -18,13 +18,28 @@ import android.widget.TextView;
 
 import com.maciejprogramuje.facebook.mypodcastplayer.screens.discover.DiscoverFragment;
 import com.maciejprogramuje.facebook.mypodcastplayer.screens.login.LoginActivity;
+import com.maciejprogramuje.facebook.mypodcastplayer.screens.subscribed.AddActionEvent;
 import com.maciejprogramuje.facebook.mypodcastplayer.screens.subscribed.SubscribedFragment;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    @InjectView(R.id.toolbar)
+    Toolbar toolbar;
+    @InjectView(R.id.fab)
+    FloatingActionButton fab;
+    @InjectView(R.id.nav_view)
+    NavigationView navView;
+    @InjectView(R.id.drawer_layout)
+    DrawerLayout drawerLayout;
+
     private UserStorage userStorage;
-    private NavigationView navigationView;
+    private Bus bus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,10 +52,9 @@ public class MainActivity extends AppCompatActivity
         }
 
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ButterKnife.inject(this);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -49,21 +63,33 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        navView.setNavigationItemSelectedListener(this);
 
-        View headerView = navigationView.getHeaderView(0);
+        View headerView = navView.getHeaderView(0);
         TextView drawerNameTextView = headerView.findViewById(R.id.drawerNameTextView);
         TextView drawerMailTextView = headerView.findViewById(R.id.drawerMailTextView);
         drawerNameTextView.setText(userStorage.getFullName());
         drawerMailTextView.setText(userStorage.getEmail());
 
-        onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_subscribe));
+        onNavigationItemSelected(navView.getMenu().findItem(R.id.nav_subscribe));
+
+        bus = ((App) getApplication()).getBus();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        bus.register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        bus.unregister(this);
     }
 
     private void goToLogin() {
@@ -123,9 +149,13 @@ public class MainActivity extends AppCompatActivity
                 .commit();
     }
 
+    @Subscribe
+    public void onAddAction(AddActionEvent addActionEvent) {
+        goToDiscover();
+    }
 
     public void goToDiscover() {
-        MenuItem item = navigationView.getMenu().findItem(R.id.nav_discover);
+        MenuItem item = navView.getMenu().findItem(R.id.nav_discover);
         item.setChecked(true);
         onNavigationItemSelected(item);
     }

@@ -19,8 +19,6 @@ import butterknife.OnClick;
 
 
 public class LoginActivity extends AppCompatActivity {
-
-
     @InjectView(R.id.loginEditText)
     EditText loginEditText;
     @InjectView(R.id.loginEditTextLayout)
@@ -33,6 +31,7 @@ public class LoginActivity extends AppCompatActivity {
     TextView registerButton;
     @InjectView(R.id.loginButton)
     TextView loginButton;
+
     private LoginManager loginManager;
 
     @Override
