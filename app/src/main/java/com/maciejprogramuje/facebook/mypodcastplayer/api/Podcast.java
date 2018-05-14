@@ -1,12 +1,12 @@
 package com.maciejprogramuje.facebook.mypodcastplayer.api;
 
 public class Podcast {
-    String fullUrl;
-    String thumbUrl;
-    String title;
-    String description;
-    int numberOfEpisodes;
-    long podcastId;
+    private String fullUrl;
+    private String thumbUrl;
+    private String title;
+    private String description;
+    private int numberOfEpisodes;
+    private long podcastId;
 
     public String getFullUrl() {
         return fullUrl;

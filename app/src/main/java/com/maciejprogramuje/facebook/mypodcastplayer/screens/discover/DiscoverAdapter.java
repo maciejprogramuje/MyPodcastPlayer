@@ -19,7 +19,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 class DiscoverAdapter extends RecyclerView.Adapter<DiscoverHolder> {
-    List<Podcast> podcasts = new ArrayList<>();
+    private List<Podcast> podcasts = new ArrayList<>();
 
     @NonNull
     @Override
@@ -31,14 +31,18 @@ class DiscoverAdapter extends RecyclerView.Adapter<DiscoverHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull DiscoverHolder holder, int position) {
-        Podcast podcast = podcasts.get(position);
-        holder.podcastNameTextView.setText(podcast.getTitle());
-        holder.podcastEpisodesCounterTextView.setText(podcast.getNumberOfEpisodes());
+        holder.setPodcast(podcasts.get(position));
     }
 
     @Override
     public int getItemCount() {
         return podcasts.size();
+    }
+
+    public void setPodcasts(List<Podcast> results) {
+        podcasts.clear();
+        podcasts.addAll(results);
+        notifyDataSetChanged();
     }
 }
 
@@ -52,8 +56,16 @@ class DiscoverHolder extends RecyclerView.ViewHolder {
     @InjectView(R.id.podcastAddImageButton)
     ImageButton podcastAddImageButton;
 
-    public DiscoverHolder(View itemView) {
+    DiscoverHolder(View itemView) {
         super(itemView);
         ButterKnife.inject(this, itemView);
     }
+
+    public void setPodcast(Podcast podcast) {
+        podcastNameTextView.setText(podcast.getTitle());
+        String numberOfEpisodes = String.valueOf(podcast.getNumberOfEpisodes()) + " " + podcastNameTextView.getResources().getString(R.string.episodes);
+        podcastEpisodesCounterTextView.setText(numberOfEpisodes);
+    }
 }
+
+
