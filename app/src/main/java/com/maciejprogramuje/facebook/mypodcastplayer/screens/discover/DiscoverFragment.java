@@ -11,6 +11,9 @@ import android.view.ViewGroup;
 
 import com.maciejprogramuje.facebook.mypodcastplayer.App;
 import com.maciejprogramuje.facebook.mypodcastplayer.R;
+import com.maciejprogramuje.facebook.mypodcastplayer.api.Podcast;
+
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -34,7 +37,14 @@ public class DiscoverFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        discoverManager.onStart(this);
         discoverManager.loadPodcasts();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        discoverManager.onStop();
     }
 
     @Override
@@ -48,5 +58,9 @@ public class DiscoverFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.reset(this);
+    }
+
+    public void showPodcasts(List<Podcast> results) {
+        DiscoverAdapter adapter = new DiscoverAdapter();
     }
 }

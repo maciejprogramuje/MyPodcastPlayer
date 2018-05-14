@@ -14,9 +14,18 @@ import retrofit2.Response;
 public class DiscoverManager {
     private final PodcastApi podcastApi;
     private Call<PodcastResponse> call;
+    private DiscoverFragment discoverFragment;
 
     public DiscoverManager(PodcastApi podcastApi) {
         this.podcastApi = podcastApi;
+    }
+
+    public void onStart(DiscoverFragment discoverFragment) {
+        this.discoverFragment = discoverFragment;
+    }
+
+    public void onStop() {
+        this.discoverFragment = null;
     }
 
     public void loadPodcasts() {
@@ -27,6 +36,9 @@ public class DiscoverManager {
                 if (response.isSuccessful()) {
                     for (Podcast podcast : response.body().results) {
                         Log.w("UWAGA", "podcast: " + podcast.getTitle() + ", " + podcast.getFullUrl());
+                    }
+                    if(discoverFragment != null) {
+                        discoverFragment.showPodcasts(response.body().results);
                     }
                 }
             }
