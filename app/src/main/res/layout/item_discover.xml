@@ -6,13 +6,12 @@
 
     <ImageView
         android:id="@+id/podcastCoverImageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:src="@drawable/ic_discover" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
         android:id="@+id/podcastNameTextView"
@@ -23,8 +22,7 @@
         android:layout_marginTop="8dp"
         app:layout_constraintEnd_toStartOf="@+id/podcastAddImageButton"
         app:layout_constraintStart_toEndOf="@+id/podcastCoverImageView"
-        app:layout_constraintTop_toTopOf="parent"
-        android:text="test podcastNameTextView" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
         android:id="@+id/podcastEpisodesCounterTextView"
@@ -36,8 +34,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/podcastAddImageButton"
         app:layout_constraintStart_toStartOf="@+id/podcastNameTextView"
-        app:layout_constraintTop_toBottomOf="@+id/podcastNameTextView"
-        android:text="test podcastEpisodesCounterTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/podcastNameTextView"/>
 
     <ImageButton
         android:id="@+id/podcastAddImageButton"

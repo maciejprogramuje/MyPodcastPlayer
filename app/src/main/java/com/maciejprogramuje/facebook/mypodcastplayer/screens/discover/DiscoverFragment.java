@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import com.maciejprogramuje.facebook.mypodcastplayer.App;
 import com.maciejprogramuje.facebook.mypodcastplayer.R;
 import com.maciejprogramuje.facebook.mypodcastplayer.api.Podcast;
+import com.squareup.otto.Bus;
 
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class DiscoverFragment extends Fragment {
     RecyclerView discoverRecyclerView;
 
     private DiscoverManager discoverManager;
+    private Bus bus;
 
     public DiscoverFragment() {
         // Required empty public constructor
@@ -32,7 +34,9 @@ public class DiscoverFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        discoverManager = ((App) getActivity().getApplication()).getDiscoverManager();
+        App app = (App) getActivity().getApplication();
+        discoverManager = app.getDiscoverManager();
+        bus = app.getBus();
     }
 
     @Override
@@ -62,7 +66,7 @@ public class DiscoverFragment extends Fragment {
     }
 
     public void showPodcasts(List<Podcast> results) {
-        DiscoverAdapter adapter = new DiscoverAdapter();
+        DiscoverAdapter adapter = new DiscoverAdapter(bus);
         adapter.setPodcasts(results);
         discoverRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         discoverRecyclerView.setAdapter(adapter);

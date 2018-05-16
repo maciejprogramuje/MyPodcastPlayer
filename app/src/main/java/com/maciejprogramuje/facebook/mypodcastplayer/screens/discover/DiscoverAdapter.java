@@ -9,28 +9,38 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.maciejprogramuje.facebook.mypodcastplayer.R;
 import com.maciejprogramuje.facebook.mypodcastplayer.api.Podcast;
+import com.squareup.otto.Bus;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 
-class DiscoverAdapter extends RecyclerView.Adapter<DiscoverHolder> {
+class DiscoverAdapter extends RecyclerView.Adapter<DiscoverViewHolder> {
     private List<Podcast> podcasts = new ArrayList<>();
+    private Bus bus;
+
+    public DiscoverAdapter(Bus bus) {
+        this.bus = bus;
+    }
 
     @NonNull
     @Override
-    public DiscoverHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public DiscoverViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.item_discover, parent, false);
-        return new DiscoverHolder(view);
+
+        return new DiscoverViewHolder(view, bus);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull DiscoverHolder holder, int position) {
+    public void onBindViewHolder(@NonNull DiscoverViewHolder holder, int position) {
         holder.setPodcast(podcasts.get(position));
     }
 
@@ -46,7 +56,7 @@ class DiscoverAdapter extends RecyclerView.Adapter<DiscoverHolder> {
     }
 }
 
-class DiscoverHolder extends RecyclerView.ViewHolder {
+class DiscoverViewHolder extends RecyclerView.ViewHolder {
     @InjectView(R.id.podcastCoverImageView)
     ImageView podcastCoverImageView;
     @InjectView(R.id.podcastNameTextView)
@@ -56,15 +66,32 @@ class DiscoverHolder extends RecyclerView.ViewHolder {
     @InjectView(R.id.podcastAddImageButton)
     ImageButton podcastAddImageButton;
 
-    DiscoverHolder(View itemView) {
+    private final Bus bus;
+    private Podcast podcast;
+
+    DiscoverViewHolder(View itemView, Bus bus) {
         super(itemView);
+        this.bus = bus;
         ButterKnife.inject(this, itemView);
     }
 
     public void setPodcast(Podcast podcast) {
+        this.podcast = podcast;
         podcastNameTextView.setText(podcast.getTitle());
         String numberOfEpisodes = String.valueOf(podcast.getNumberOfEpisodes()) + " " + podcastNameTextView.getResources().getString(R.string.episodes);
         podcastEpisodesCounterTextView.setText(numberOfEpisodes);
+
+        Glide.with(podcastCoverImageView.getContext())
+                .load(podcast.getThumbUrl())
+                .apply(new RequestOptions()
+                        .placeholder(R.drawable.ic_placeholder)
+                        .centerCrop())
+                .into(podcastCoverImageView);
+    }
+
+    @OnClick(R.id.podcastAddImageButton)
+    public void addPodcast() {
+        bus.post(new AddPodcastEvent(podcast));
     }
 }
 

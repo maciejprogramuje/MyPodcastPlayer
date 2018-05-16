@@ -6,6 +6,8 @@ import android.util.Log;
 import com.maciejprogramuje.facebook.mypodcastplayer.api.Podcast;
 import com.maciejprogramuje.facebook.mypodcastplayer.api.PodcastApi;
 import com.maciejprogramuje.facebook.mypodcastplayer.api.PodcastResponse;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -13,11 +15,14 @@ import retrofit2.Response;
 
 public class DiscoverManager {
     private final PodcastApi podcastApi;
+    private Bus bus;
     private Call<PodcastResponse> call;
     private DiscoverFragment discoverFragment;
 
-    public DiscoverManager(PodcastApi podcastApi) {
+    public DiscoverManager(PodcastApi podcastApi, Bus bus) {
         this.podcastApi = podcastApi;
+        this.bus = bus;
+        bus.register(this);
     }
 
     public void onStart(DiscoverFragment discoverFragment) {
@@ -48,5 +53,10 @@ public class DiscoverManager {
 
             }
         });
+    }
+
+    @Subscribe
+    public void onAddPodcastEvent(AddPodcastEvent event) {
+        Log.w("UWAGA", "add: " + event.podcast.getTitle());
     }
 }
