@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.maciejprogramuje.facebook.mypodcastplayer.App;
 import com.maciejprogramuje.facebook.mypodcastplayer.R;
@@ -70,5 +71,13 @@ public class DiscoverFragment extends Fragment {
         adapter.setPodcasts(results);
         discoverRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         discoverRecyclerView.setAdapter(adapter);
+    }
+
+    public void saveSuccessful() {
+        bus.post(new SwitchToSubscribedEvent());
+    }
+
+    public void showError(String error) {
+        Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
     }
 }

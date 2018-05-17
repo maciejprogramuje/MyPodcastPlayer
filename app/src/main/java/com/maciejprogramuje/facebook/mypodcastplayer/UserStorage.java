@@ -48,4 +48,12 @@ public class UserStorage {
     public String getEmail() {
         return sharedPreferences.getString(EMAIL_KEY, "");
     }
+
+    public String getUserId() {
+        return sharedPreferences.getString(USER_ID_KEY, "");
+    }
+
+    public String getToken() {
+        return sharedPreferences.getString(SESSION_TOKEN_KEY, "");
+    }
 }

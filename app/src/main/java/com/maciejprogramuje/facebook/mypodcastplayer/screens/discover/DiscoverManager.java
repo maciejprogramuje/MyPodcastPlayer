@@ -3,6 +3,11 @@ package com.maciejprogramuje.facebook.mypodcastplayer.screens.discover;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import com.maciejprogramuje.facebook.mypodcastplayer.UserStorage;
+import com.maciejprogramuje.facebook.mypodcastplayer.api.ErrorConverter;
+import com.maciejprogramuje.facebook.mypodcastplayer.api.ErrorResponse;
 import com.maciejprogramuje.facebook.mypodcastplayer.api.Podcast;
 import com.maciejprogramuje.facebook.mypodcastplayer.api.PodcastApi;
 import com.maciejprogramuje.facebook.mypodcastplayer.api.PodcastResponse;
@@ -16,12 +21,17 @@ import retrofit2.Response;
 public class DiscoverManager {
     private final PodcastApi podcastApi;
     private Bus bus;
+    private UserStorage userStorage;
+    private ErrorConverter errorConverter;
     private Call<PodcastResponse> call;
     private DiscoverFragment discoverFragment;
+    private Call<Subscription> subscriptionCall;
 
-    public DiscoverManager(PodcastApi podcastApi, Bus bus) {
+    public DiscoverManager(PodcastApi podcastApi, Bus bus, UserStorage userStorage, ErrorConverter errorConverter) {
         this.podcastApi = podcastApi;
         this.bus = bus;
+        this.userStorage = userStorage;
+        this.errorConverter = errorConverter;
         bus.register(this);
     }
 
@@ -58,5 +68,46 @@ public class DiscoverManager {
     @Subscribe
     public void onAddPodcastEvent(AddPodcastEvent event) {
         Log.w("UWAGA", "add: " + event.podcast.getTitle());
+        saveSubscription(event.podcast);
+    }
+
+    private void saveSubscription(Podcast podcast) {
+        String userId = userStorage.getUserId();
+
+        Subscription subscription = new Subscription();
+        subscription.podcastId = podcast.getPodcastId();
+        subscription.userId = userId;
+
+        subscription.acl = new JsonObject();
+
+        JsonObject aclJson = new JsonObject();
+        aclJson.add("read", new JsonPrimitive(true));
+        aclJson.add("write", new JsonPrimitive(true));
+        subscription.acl.add(userId, aclJson);
+
+        subscriptionCall = podcastApi.postSubscription(subscription, userStorage.getToken());
+        subscriptionCall.enqueue(new Callback<Subscription>() {
+            @Override
+            public void onResponse(Call<Subscription> call, Response<Subscription> response) {
+                if(response.isSuccessful()) {
+                    if(discoverFragment != null) {
+                        discoverFragment.saveSuccessful();
+                    }
+                } else {
+                    ErrorResponse errorResponse = errorConverter.convert(response.errorBody());
+                    if(discoverFragment != null && errorResponse != null) {
+                        discoverFragment.showError(errorResponse.error);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Subscription> call, Throwable t) {
+                if(discoverFragment != null) {
+                    discoverFragment.showError(t.getLocalizedMessage());
+                }
+            }
+        });
+
     }
 }

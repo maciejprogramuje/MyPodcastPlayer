@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.maciejprogramuje.facebook.mypodcastplayer.screens.discover.DiscoverFragment;
+import com.maciejprogramuje.facebook.mypodcastplayer.screens.discover.SwitchToSubscribedEvent;
 import com.maciejprogramuje.facebook.mypodcastplayer.screens.login.LoginActivity;
 import com.maciejprogramuje.facebook.mypodcastplayer.screens.subscribed.AddActionEvent;
 import com.maciejprogramuje.facebook.mypodcastplayer.screens.subscribed.SubscribedFragment;
@@ -152,8 +153,21 @@ public class MainActivity extends AppCompatActivity
         goToDiscover();
     }
 
+    @Subscribe
+    public void onSwitchToSubscribed(SwitchToSubscribedEvent switchToSubscribedEvent) {
+        goToSubscribed();
+    }
+
+    private void goToSubscribed() {
+        goToItem(R.id.nav_subscribe);
+    }
+
     public void goToDiscover() {
-        MenuItem item = navView.getMenu().findItem(R.id.nav_discover);
+        goToItem(R.id.nav_discover);
+    }
+
+    private void goToItem(int id) {
+        MenuItem item = navView.getMenu().findItem(id);
         item.setChecked(true);
         onNavigationItemSelected(item);
     }

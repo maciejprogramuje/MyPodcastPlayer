@@ -6,31 +6,27 @@ import android.util.Log;
 
 import com.maciejprogramuje.facebook.mypodcastplayer.MainActivity;
 import com.maciejprogramuje.facebook.mypodcastplayer.UserStorage;
+import com.maciejprogramuje.facebook.mypodcastplayer.api.ErrorConverter;
 import com.maciejprogramuje.facebook.mypodcastplayer.api.ErrorResponse;
 import com.maciejprogramuje.facebook.mypodcastplayer.api.PodcastApi;
 import com.maciejprogramuje.facebook.mypodcastplayer.api.UserResponse;
 
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Converter;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
 public class LoginManager {
     private LoginActivity loginActivity;
     private UserStorage userStorage;
     private final PodcastApi podcastApi;
-    private final Retrofit retrofit;
+    private ErrorConverter errorConverter;
     private boolean isDuringLoging;
 
-    public LoginManager(UserStorage userStorage, PodcastApi podcastApi, Retrofit retrofit) {
+    public LoginManager(UserStorage userStorage, PodcastApi podcastApi, ErrorConverter errorConverter) {
         this.userStorage = userStorage;
         this.podcastApi = podcastApi;
-        this.retrofit = retrofit;
+        this.errorConverter = errorConverter;
     }
 
     public void onAttach(LoginActivity loginActivity) {
@@ -61,16 +57,10 @@ public class LoginManager {
                         }
                     } else {
                         ResponseBody responseBody = response.errorBody();
-                        Converter<ResponseBody, ErrorResponse> converter = retrofit.responseBodyConverter(ErrorResponse.class, new Annotation[]{});
-                        try {
-                            assert responseBody != null;
-                            ErrorResponse errorResponse = converter.convert(responseBody);
-                            if(loginActivity != null) {
-                                Log.w("UWAGA", "ErrorResponse -> " + errorResponse);
-                                loginActivity.showError(errorResponse.toString());
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                        ErrorResponse errorResponse = errorConverter.convert(responseBody);
+                        if(loginActivity != null && errorResponse != null) {
+                            Log.w("UWAGA", "ErrorResponse -> " + errorResponse);
+                            loginActivity.showError(errorResponse.toString());
                         }
                     }
                 }

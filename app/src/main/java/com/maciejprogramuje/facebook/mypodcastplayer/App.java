@@ -3,6 +3,7 @@ package com.maciejprogramuje.facebook.mypodcastplayer;
 import android.app.Application;
 import android.preference.PreferenceManager;
 
+import com.maciejprogramuje.facebook.mypodcastplayer.api.ErrorConverter;
 import com.maciejprogramuje.facebook.mypodcastplayer.api.PodcastApi;
 import com.maciejprogramuje.facebook.mypodcastplayer.screens.discover.DiscoverManager;
 import com.maciejprogramuje.facebook.mypodcastplayer.screens.login.LoginManager;
@@ -26,6 +27,7 @@ public class App extends Application {
     private PodcastApi podcastApi;
     private DiscoverManager discoverManager;
     private Bus bus;
+    private ErrorConverter errorConverter;
 
     @Override
     public void onCreate() {
@@ -46,9 +48,10 @@ public class App extends Application {
         bus = new Bus();
 
         userStorage = new UserStorage(PreferenceManager.getDefaultSharedPreferences(this));
-        loginManager = new LoginManager(userStorage, podcastApi, retrofit);
+        errorConverter = new ErrorConverter(retrofit);
+        loginManager = new LoginManager(userStorage, podcastApi, errorConverter);
         registerManager = new RegisterManager(userStorage, podcastApi, retrofit);
-        discoverManager = new DiscoverManager(podcastApi, bus);
+        discoverManager = new DiscoverManager(podcastApi, bus, userStorage, errorConverter);
     }
 
     public LoginManager getLoginManager() {
