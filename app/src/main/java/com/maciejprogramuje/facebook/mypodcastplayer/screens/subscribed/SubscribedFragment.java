@@ -12,9 +12,14 @@ import android.view.ViewGroup;
 
 import com.maciejprogramuje.facebook.mypodcastplayer.App;
 import com.maciejprogramuje.facebook.mypodcastplayer.R;
+import com.maciejprogramuje.facebook.mypodcastplayer.api.Podcast;
 import com.squareup.otto.Bus;
 
+import java.util.List;
+
 public class SubscribedFragment extends Fragment {
+    private SubscribedManager subscribedManager;
+
     public SubscribedFragment() {
         // Required empty public constructor
     }
@@ -27,8 +32,9 @@ public class SubscribedFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setHasOptionsMenu(true);
+        subscribedManager = ((App)getActivity().getApplication()).getSubscribedManager();
+        subscribedManager.loadPodcasts();
     }
 
     @Override
@@ -48,5 +54,9 @@ public class SubscribedFragment extends Fragment {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void showPodcasts(List<Podcast> results) {
+
     }
 }
